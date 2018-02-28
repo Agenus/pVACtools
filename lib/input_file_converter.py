@@ -158,6 +158,7 @@ class VcfConverter(InputFileConverter):
         gene_expns = {}
         if self.gene_expn_file is not None:
             with open(self.gene_expn_file, 'r') as reader:
+                print(reader)
                 genes_tsv_reader = csv.DictReader(reader, delimiter='\t')
                 for row in genes_tsv_reader:
                     if row['tracking_id'] not in gene_expns.keys():
@@ -197,23 +198,29 @@ class VcfConverter(InputFileConverter):
             reference  = entry.REF
             alts       = entry.ALT
 
+            '''
             genotype = entry.genotype(vcf_reader.samples[0])
+            #print(genotype)
+            #genotype.gt_type = True #mclaugsf - hack to get this to work with Strelka which is apparently not outputting any genotypes.
+
             if genotype.gt_type is None or genotype.gt_type == 0:
                 #The genotype is uncalled or hom_ref
-                continue
+                #continue
+                a = 0 #mclaugsf - hack to get this to work with Strelka which is apparently not outputting any genotypes.
 
             if len(vcf_reader.samples) == 1:
                 genotype = entry.genotype(vcf_reader.samples[0])
                 if genotype.gt_type is None or genotype.gt_type == 0:
                     #The genotype is uncalled or hom_ref
-                    continue
-
+                    #continue
+                    a = 0 #mclaugsf - hack to get this to work with Strelka which is apparently not outputting any genotypes.
+            '''
             alleles_dict = self.resolve_alleles(entry)
             indexes = []
             for alt in alts:
                 alt = str(alt)
-                if genotype.gt_bases and alt not in genotype.gt_bases.split('/'):
-                    continue
+                #if genotype.gt_bases and alt not in genotype.gt_bases.split('/'):
+                #    continue
 
                 if entry.is_indel:
                     if self.is_deletion(reference, alt):
